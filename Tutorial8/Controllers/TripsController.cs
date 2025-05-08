@@ -4,8 +4,8 @@ using Tutorial8.Services;
 
 namespace Tutorial8.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class TripsController : ControllerBase
     {
         private readonly ITripsService _tripsService;
@@ -15,7 +15,7 @@ namespace Tutorial8.Controllers
             _tripsService = tripsService;
         }
 
-        [HttpGet]
+        [HttpGet("trips")]
         public async Task<IActionResult> GetTrips()
         {
             var trips = await _tripsService.GetTrips();

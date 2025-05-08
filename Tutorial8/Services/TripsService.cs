@@ -1,19 +1,25 @@
 ﻿using Microsoft.Data.SqlClient;
 using Tutorial8.Models.DTOs;
+using Tutorial8.Repositories;
 
 namespace Tutorial8.Services;
 
 public class TripsService : ITripsService
 {
-    private readonly string _connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=APBD;Integrated Security=True;";
-    
+    private readonly ITripRepository _tripRepository;
+
+    public TripsService(ITripRepository tripRepository)
+    {
+        this._tripRepository = tripRepository;
+    }    
+
     public async Task<List<TripDTO>> GetTrips()
     {
         var trips = new List<TripDTO>();
 
         string command = "SELECT IdTrip, Name FROM Trip";
         
-        using (SqlConnection conn = new SqlConnection(_connectionString))
+        using (SqlConnection conn = new SqlConnection(ConnectionString))
         using (SqlCommand cmd = new SqlCommand(command, conn))
         {
             await conn.OpenAsync();
