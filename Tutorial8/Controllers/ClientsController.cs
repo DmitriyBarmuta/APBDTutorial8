@@ -15,12 +15,12 @@ public class ClientsController : ControllerBase
         _clientsService = clientsService;
     }
 
-    [HttpGet("{id}/trips")]
+    [HttpGet("{id:int}/trips")]
     public async Task<IActionResult> GetClientTrips(int id)
     {
         try
         {
-            var trips = await _clientsService.GetClientTrips(id);
+            var trips = await _clientsService.GetClientTripsAsync(id);
             return Ok(trips);
         }
         catch (NoSuchClientException e)

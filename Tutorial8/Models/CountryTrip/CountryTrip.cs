@@ -1,4 +1,4 @@
-namespace Tutorial8.Models.Join;
+namespace Tutorial8.Models.CountryTrip;
 
 public class CountryTrip
 {

@@ -21,12 +21,12 @@ public class TripsService : ITripsService
     {
         var trips = await _tripsRepository.GetTripsAsync();
 
-        var allCountryIds = trips
+        var countryIds = trips
             .SelectMany(t => t.CountryTrips.Select(ct => ct.IdCountry))
             .Distinct()
             .ToList();
 
-        var countries = await _countriesRepository.GetByIdsAsync(allCountryIds);
+        var countries = await _countriesRepository.GetByIdsAsync(countryIds);
         var countryMap = countries.ToDictionary(c => c.IdCountry);
 
         return trips.Select(t => new TripDTO

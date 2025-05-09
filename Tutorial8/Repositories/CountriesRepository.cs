@@ -16,7 +16,7 @@ public class CountriesRepository : ICountriesRepository
 
     public async Task<List<Country>> GetByIdsAsync(IEnumerable<int> ids)
     {
-        var idList = ids.Distinct().ToList();
+        var idList = ids.ToList();
         if (idList.Count == 0)
             return [];
 
