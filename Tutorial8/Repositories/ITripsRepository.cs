@@ -5,6 +5,6 @@ namespace Tutorial8.Repositories;
 public interface ITripsRepository
 {
     Task<List<Trip>> GetTripsAsync();
-    
     Task<List<Trip>> GetByIdsAsync(IEnumerable<int> ids);
+    Task<bool> DoesTripExistAsync(int tripId);
 }

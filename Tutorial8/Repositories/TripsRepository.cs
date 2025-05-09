@@ -109,4 +109,18 @@ public class TripsRepository : ITripsRepository
 
         return result;
     }
+
+    public async Task<bool> DoesTripExistAsync(int tripId)
+    {
+        const string sql = "SELECT Count(*) From Trip WHERE IdTrip = @tripId";
+
+        await using var conn = _connectionFactory.GetConnection();
+        await using var cmd = conn.CreateCommand();
+        cmd.CommandText = sql;
+        cmd.Parameters.AddWithValue("@tripId", tripId);
+
+        await conn.OpenAsync();
+        var result = (int)(await cmd.ExecuteScalarAsync() ?? 0);
+        return result > 0;
+    }
 }

@@ -1,6 +1,7 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
 using Tutorial8.Infrastructure;
+using Tutorial8.Models.Client;
 using Tutorial8.Models.ClientTrip;
 
 namespace Tutorial8.Repositories;
@@ -59,5 +60,26 @@ public class ClientsRepository : IClientsRepository
         }
 
         return list;
+    }
+
+    public async Task<int> CreateClientAsync(CreateClientDTO createClientDto)
+    {
+        const string sql = """
+                           INSERT INTO Client (FirstName, LastName, Email, Telephone, Pesel)
+                           OUTPUT INSERTED.IdClient
+                           VALUES (@fname, @lname, @email, @telephone, @pesel);
+                           """;
+
+        await using var conn = _connectionFactory.GetConnection();
+        await using var cmd = conn.CreateCommand();
+        cmd.CommandText = sql;
+        cmd.Parameters.AddWithValue("@fname", createClientDto.FirstName);
+        cmd.Parameters.AddWithValue("@lname", createClientDto.LastName);
+        cmd.Parameters.AddWithValue("@email", createClientDto.Email);
+        cmd.Parameters.AddWithValue("@telephone", createClientDto.Telephone);
+        cmd.Parameters.AddWithValue("@pesel", createClientDto.Pesel);
+
+        await conn.OpenAsync();
+        return (int)(await cmd.ExecuteScalarAsync() ?? -1);
     }
 }

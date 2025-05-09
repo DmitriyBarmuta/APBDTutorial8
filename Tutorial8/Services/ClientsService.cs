@@ -1,4 +1,5 @@
 using Tutorial8.Exceptions;
+using Tutorial8.Models.Client;
 using Tutorial8.Models.ClientTrip;
 using Tutorial8.Repositories;
 
@@ -43,5 +44,20 @@ public class ClientsService : IClientsService
                 PaymentDate = clientTrip.PaymentDate
             })
             .ToList();
+    }
+
+    public async Task<int> CreateClientAsync(CreateClientDTO createClientDto)
+    {
+        return await _clientsRepository.CreateClientAsync(createClientDto);
+    }
+
+    public Task RegisterClientToTripAsync(int clientId, int tripId)
+    {
+        
+    }
+
+    public Task DeleteClientFromTripAsync(int clientId, int tripId)
+    {
+        
     }
 }
