@@ -10,6 +10,6 @@ public interface IClientsRepository
     Task<bool> DoesClientExistAsync(int clientId);
     Task<List<ClientTrip>> GetClientTripsAsync(int clientId);
     Task<bool> IsClientRegisteredForTripAsync(int clientId, int tripId);
-    Task RegisterClientForTripAsync(int clientId, int tripId);
+    Task<bool> RegisterClientForTripAsync(int clientId, int tripId);
     Task<bool> DeleteClientTripAsync(int clientId, int tripId);
 }

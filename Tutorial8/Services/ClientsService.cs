@@ -71,7 +71,9 @@ public class ClientsService : IClientsService
         if (registrationsCount >= trip!.MaxPeople)
             throw new TripFullException($"Trip with ID {tripId} is full.");
 
-        await _clientsRepository.RegisterClientForTripAsync(clientId, tripId);
+        var inserted = await _clientsRepository.RegisterClientForTripAsync(clientId, tripId);
+        if (!inserted)
+            throw new DatabaseConnectionException($"Failed to register client for trip with ID {tripId}");
     }
 
     public async Task RemoveClientFromTripAsync(int clientId, int tripId)
