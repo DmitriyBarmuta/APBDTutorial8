@@ -6,39 +6,38 @@ namespace Tutorial8.Services;
 
 public class TripsService : ITripsService
 {
-    private readonly ITripRepository _tripRepository;
+    private readonly ITripsRepository _tripsRepository;
 
-    public TripsService(ITripRepository tripRepository)
+    public TripsService(ITripsRepository tripsRepository)
     {
-        this._tripRepository = tripRepository;
-    }    
+        this._tripsRepository = tripsRepository;
+    }
 
-    public async Task<List<TripDTO>> GetTrips()
+    public async Task<List<TripDTO>> GetTrips() => await _tripsRepository.GetTrips();
+
+    /*var trips = new List<TripDTO>();
+
+    string command = "SELECT IdTrip, Name FROM Trip";
+
+    using (SqlConnection conn = new SqlConnection())
+    using (SqlCommand cmd = new SqlCommand(command, conn))
     {
-        var trips = new List<TripDTO>();
+        await conn.OpenAsync();
 
-        string command = "SELECT IdTrip, Name FROM Trip";
-        
-        using (SqlConnection conn = new SqlConnection(ConnectionString))
-        using (SqlCommand cmd = new SqlCommand(command, conn))
+        using (var reader = await cmd.ExecuteReaderAsync())
         {
-            await conn.OpenAsync();
-
-            using (var reader = await cmd.ExecuteReaderAsync())
+            while (await reader.ReadAsync())
             {
-                while (await reader.ReadAsync())
+                int idOrdinal = reader.GetOrdinal("IdTrip");
+                trips.Add(new TripDTO()
                 {
-                    int idOrdinal = reader.GetOrdinal("IdTrip");
-                    trips.Add(new TripDTO()
-                    {
-                        Id = reader.GetInt32(idOrdinal),
-                        Name = reader.GetString(1),
-                    });
-                }
+                    Id = reader.GetInt32(idOrdinal),
+                    Name = reader.GetString(1),
+                });
             }
         }
-        
-
-        return trips;
     }
+
+
+    return trips;*/
 }

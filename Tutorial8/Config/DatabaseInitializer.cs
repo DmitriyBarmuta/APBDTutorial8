@@ -1,33 +1,42 @@
 using System.Reflection;
 using Microsoft.Data.SqlClient;
+using Tutorial8.Infrastructure;
 
 namespace Tutorial8.Config;
 
 public class DatabaseInitializer
 {
-    private readonly string _connectionString;
 
-    public DatabaseInitializer(IConfiguration configuration)
+    private readonly ISqlConnectionFactory _connectionFactory;
+    
+    public DatabaseInitializer(ISqlConnectionFactory connectionFactory)
     {
-        _connectionString = configuration.GetConnectionString("Default");
+        _connectionFactory = connectionFactory;
     }
 
     public async Task InitializeAsync()
     {
-        using var connection = new SqlConnection(_connectionString);
+        await using var connection = _connectionFactory.GetConnection();
         await connection.OpenAsync();
 
 
         var createSql = ReadEbmeddedSql("DatabaseCreate.sql");
         var fillSql = ReadEbmeddedSql("DatabaseFill.sql");
 
-        using var createCommand = connection.CreateCommand();
+        await using var createCommand = connection.CreateCommand();
         createCommand.CommandText = createSql;
         await createCommand.ExecuteNonQueryAsync();
 
-        using var fillCommand = connection.CreateCommand();
-        fillCommand.CommandText = fillSql;
-        await fillCommand.ExecuteNonQueryAsync();
+        var checkCmd = connection.CreateCommand();
+        checkCmd.CommandText = "SELECT COUNT(*) FROM Trip";
+        var result = (int)(await checkCmd.ExecuteScalarAsync() ?? 0);
+
+        if (result == 0)
+        {
+            await using var fillCommand = connection.CreateCommand();
+            fillCommand.CommandText = fillSql;
+            await fillCommand.ExecuteNonQueryAsync();
+        }
     }
 
     private string ReadEbmeddedSql(string fileName)

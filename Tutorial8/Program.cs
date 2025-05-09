@@ -1,25 +1,30 @@
+using Tutorial8.Config;
+using Tutorial8.Infrastructure;
+using Tutorial8.Repositories;
 using Tutorial8.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddScoped<ITripsService, TripsService>();
-
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddScoped<ITripsRepository, TripsRepository>();
+builder.Services.AddSingleton<ISqlConnectionFactory, SqlConnectionFactory>();
+builder.Services.AddSingleton<DatabaseInitializer>();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+using (var scope = app.Services.CreateScope())
+{
+    var initializer = scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();
+    await initializer.InitializeAsync();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
 app.UseAuthorization();
-
 app.MapControllers();
-
-app.Run();
+await app.RunAsync();

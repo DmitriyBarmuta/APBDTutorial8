@@ -2,7 +2,7 @@ using Tutorial8.Models.DTOs;
 
 namespace Tutorial8.Repositories;
 
-public interface ITripRepository
+public interface ITripsRepository
 {
     Task<List<TripDTO>> GetTrips();
 }
