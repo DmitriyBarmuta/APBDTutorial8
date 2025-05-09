@@ -1,4 +1,4 @@
-namespace Tutorial8.Models.DTOs;
+namespace Tutorial8.Models.Country;
 
 public class CountryDTO
 {

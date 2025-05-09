@@ -1,4 +1,6 @@
-﻿namespace Tutorial8.Models.DTOs;
+﻿using Tutorial8.Models.Country;
+
+namespace Tutorial8.Models.Trip;
 
 public class TripDTO
 {

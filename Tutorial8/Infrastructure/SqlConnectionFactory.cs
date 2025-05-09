@@ -12,5 +12,5 @@ public class SqlConnectionFactory : ISqlConnectionFactory
         _connectionString = configuration.GetConnectionString("Default");        
     }
 
-    public SqlConnection GetConnection() => new SqlConnection(_connectionString);
+    public SqlConnection GetConnection() => new(_connectionString);
 }

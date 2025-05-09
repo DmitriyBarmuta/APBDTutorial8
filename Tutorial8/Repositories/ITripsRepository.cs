@@ -1,8 +1,8 @@
-using Tutorial8.Models.DTOs;
+using Tutorial8.Models.Trip;
 
 namespace Tutorial8.Repositories;
 
 public interface ITripsRepository
 {
-    Task<List<TripDTO>> GetTrips();
+    Task<List<Trip>> GetTripsAsync();
 }

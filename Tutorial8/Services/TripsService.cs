@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
-using Tutorial8.Models.DTOs;
+using Tutorial8.Models.Country;
+using Tutorial8.Models.Trip;
 using Tutorial8.Repositories;
 
 namespace Tutorial8.Services;
@@ -7,37 +8,44 @@ namespace Tutorial8.Services;
 public class TripsService : ITripsService
 {
     private readonly ITripsRepository _tripsRepository;
+    private readonly ICountriesRepository _countriesRepository;
 
-    public TripsService(ITripsRepository tripsRepository)
+    public TripsService(ITripsRepository tripsRepository,
+        ICountriesRepository countriesRepository)
     {
-        this._tripsRepository = tripsRepository;
+        _tripsRepository = tripsRepository;
+        _countriesRepository = countriesRepository;
     }
 
-    public async Task<List<TripDTO>> GetTrips() => await _tripsRepository.GetTrips();
-
-    /*var trips = new List<TripDTO>();
-
-    string command = "SELECT IdTrip, Name FROM Trip";
-
-    using (SqlConnection conn = new SqlConnection())
-    using (SqlCommand cmd = new SqlCommand(command, conn))
+    public async Task<List<TripDTO>> GetTripsAsync()
     {
-        await conn.OpenAsync();
+        var trips = await _tripsRepository.GetTripsAsync();
 
-        using (var reader = await cmd.ExecuteReaderAsync())
-        {
-            while (await reader.ReadAsync())
+        var allCountryIds = trips
+            .SelectMany(t => t.CountryTrips.Select(ct => ct.IdCountry))
+            .Distinct()
+            .ToList();
+
+        var countries = await _countriesRepository.GetByIdsAsync(allCountryIds);
+        var countryMap = countries.ToDictionary(c => c.IdCountry);
+
+        return trips.Select(t => new TripDTO
             {
-                int idOrdinal = reader.GetOrdinal("IdTrip");
-                trips.Add(new TripDTO()
-                {
-                    Id = reader.GetInt32(idOrdinal),
-                    Name = reader.GetString(1),
-                });
-            }
-        }
+                Id = t.IdTrip,
+                Name = t.Name,
+                Description = t.Description,
+                DateFrom = t.DateFrom,
+                DateTo = t.DateTo,
+                MaxPeople = t.MaxPeople,
+                Countries = t.CountryTrips
+                    .Select(ct =>
+                        new CountryDTO
+                        {
+                            Id = ct.IdCountry,
+                            Name = countryMap[ct.IdCountry].Name
+                        })
+                    .ToList()
+            })
+            .ToList();
     }
-
-
-    return trips;*/
 }

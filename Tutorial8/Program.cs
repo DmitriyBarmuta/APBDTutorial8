@@ -8,9 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddScoped<ITripsService, TripsService>();
 builder.Services.AddScoped<ITripsRepository, TripsRepository>();
+builder.Services.AddScoped<IClientsService, ClientsService>();
+builder.Services.AddScoped<IClientsRepository, ClientsRepository>();
+builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
 builder.Services.AddSingleton<ISqlConnectionFactory, SqlConnectionFactory>();
 builder.Services.AddSingleton<DatabaseInitializer>();
-builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
@@ -18,11 +20,6 @@ using (var scope = app.Services.CreateScope())
 {
     var initializer = scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();
     await initializer.InitializeAsync();
-}
-
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
 }
 
 app.UseAuthorization();
