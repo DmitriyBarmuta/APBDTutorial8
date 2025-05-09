@@ -6,7 +6,7 @@ namespace Tutorial8.Repositories;
 // IClientsRepository.cs
 public interface IClientsRepository
 {
-    Task<int> CreateClientAsync(CreateClientDTO dto);
+    Task<int> CreateClientAsync(CreateClientDTO createClientDto);
     Task<bool> DoesClientExistAsync(int clientId);
     Task<List<ClientTrip>> GetClientTripsAsync(int clientId);
     Task<bool> IsClientRegisteredForTripAsync(int clientId, int tripId);

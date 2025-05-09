@@ -20,8 +20,8 @@ public class DatabaseInitializer
         await connection.OpenAsync();
 
 
-        var createSql = ReadEbmeddedSql("DatabaseCreate.sql");
-        var fillSql = ReadEbmeddedSql("DatabaseFill.sql");
+        var createSql = ReadEmbeddedSql("DatabaseCreate.sql");
+        var fillSql = ReadEmbeddedSql("DatabaseFill.sql");
 
         await using var createCommand = connection.CreateCommand();
         createCommand.CommandText = createSql;
@@ -39,7 +39,7 @@ public class DatabaseInitializer
         }
     }
 
-    private string ReadEbmeddedSql(string fileName)
+    private static string ReadEmbeddedSql(string fileName)
     {
         var assembly = Assembly.GetExecutingAssembly();
         var resourceName = assembly

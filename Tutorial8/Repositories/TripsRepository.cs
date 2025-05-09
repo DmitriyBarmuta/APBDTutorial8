@@ -3,7 +3,8 @@ using Microsoft.Data.SqlClient;
 using Tutorial8.Infrastructure;
 using Tutorial8.Models.CountryTrip;
 using Tutorial8.Models.Trip;
-using Tutorial8.Repositories;
+
+namespace Tutorial8.Repositories;
 
 public class TripsRepository : ITripsRepository
 {
