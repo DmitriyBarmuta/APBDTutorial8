@@ -61,7 +61,7 @@ public class ClientsService : IClientsService
         if (!await _tripsRepository.DoesTripExistAsync(tripId))
             throw new NoSuchTripException($"Trip with ID {tripId} not found.");
 
-        if (await _clientsRepository.DoesClientExistAsync(clientId))
+        if (await _clientsRepository.IsClientRegisteredForTripAsync(clientId, tripId))
             throw new AlreadyRegisteredException(
                 $"Client with ID {clientId} already registered for trip with ID {tripId}");
 
