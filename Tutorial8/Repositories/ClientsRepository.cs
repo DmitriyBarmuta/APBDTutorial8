@@ -85,6 +85,39 @@ public class ClientsRepository : IClientsRepository
 
     public async Task<bool> IsClientRegisteredForTripAsync(int clientId, int tripId)
     {
+        const string sql = "SELECT COUNT(*) FROM Client_Trip WHERE IdClient = @clientId AND IdTrip = @tripId";
         
+        await using var conn = _connectionFactory.GetConnection();
+        await using var cmd = conn.CreateCommand();
+        cmd.CommandText = sql;
+        cmd.Parameters.AddWithValue("@clientId", clientId);
+        cmd.Parameters.AddWithValue("@tripId", tripId);
+
+        await conn.OpenAsync();
+        var count = (int)(await cmd.ExecuteScalarAsync() ?? 0);
+
+        return count > 0;
+    }
+
+    public async Task RegisterClientForTripAsync(int clientId, int tripId)
+    {
+        var registeredAt = DateTime.UtcNow;
+        const string sql = @"INSERT INTO Client_Trip (IdClient, IdTrip, RegisteredAt) VALUES
+                       (@clientId, @tripId, @registeredAt)";
+        
+        await using var conn = _connectionFactory.GetConnection();
+        await using var cmd = conn.CreateCommand();
+        cmd.CommandText = sql;
+        cmd.Parameters.AddWithValue("@clientId", clientId);
+        cmd.Parameters.AddWithValue("@tripId", tripId);
+        cmd.Parameters.AddWithValue("@registeredAt", registeredAt);
+        
+        await conn.OpenAsync();
+        await cmd.ExecuteNonQueryAsync();
+    }
+
+    public Task<bool> DeleteClientTripAsync(int clientId, int tripId)
+    {
+        throw new NotImplementedException();
     }
 }
