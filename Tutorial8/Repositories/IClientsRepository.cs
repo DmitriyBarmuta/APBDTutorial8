@@ -9,8 +9,8 @@ public interface IClientsRepository
     Task<int> CreateClientAsync(CreateClientDTO dto);
     Task<bool> DoesClientExistAsync(int clientId);
     Task<List<ClientTrip>> GetClientTripsAsync(int clientId);
-    Task<int> CountRegistrationsAsync(int tripId);
     Task<bool> IsClientRegisteredForTripAsync(int clientId, int tripId);
-    Task RegisterClientForTripAsync(int clientId, int tripId, DateTime registeredAt);
+    Task<int> CountRegistrationsAsync(int tripId);
+    Task RegisterClientForTripAsync(int clientId, int tripId);
     Task<bool> DeleteClientTripAsync(int clientId, int tripId);
 }

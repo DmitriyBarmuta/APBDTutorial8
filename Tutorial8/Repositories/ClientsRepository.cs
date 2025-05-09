@@ -82,4 +82,9 @@ public class ClientsRepository : IClientsRepository
         await conn.OpenAsync();
         return (int)(await cmd.ExecuteScalarAsync() ?? -1);
     }
+
+    public async Task<bool> IsClientRegisteredForTripAsync(int clientId, int tripId)
+    {
+        
+    }
 }

@@ -78,11 +78,11 @@ public class ClientsController : ControllerBase
     }
 
     [HttpDelete("{clientId:int}/trips/{tripId:int}")]
-    public async Task<IActionResult> DeleteClientTrip(int clientId, int tripId)
+    public async Task<IActionResult> RemoveClientFromTrip(int clientId, int tripId)
     {
         try
         {
-            await _clientsService.DeleteClientFromTripAsync(clientId, tripId);
+            await _clientsService.RemoveClientFromTripAsync(clientId, tripId);
             return NoContent();
         }
         catch (Exception e) when (e is NoSuchClientException or NoSuchTripException)

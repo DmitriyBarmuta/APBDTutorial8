@@ -67,6 +67,35 @@ public class TripsRepository : ITripsRepository
         return tripsDict.Values.ToList();
     }
 
+    public async Task<Trip?> GetByIdAsync(int id)
+    {
+        const string sql = "SELECT IdTrip, Name, Description, DateFrom, DateTo, MaxPeople FROM Trip WHERE IdTrip = @tripId";
+
+        await using var conn = _connectionFactory.GetConnection();
+        await using var cmd = conn.CreateCommand();
+        cmd.CommandText = sql;
+        cmd.Parameters.AddWithValue("@tripId", id);
+
+        await conn.OpenAsync();
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        if (await reader.ReadAsync())
+        {
+            return new Trip
+            {
+                IdTrip      = reader.GetInt32(reader.GetOrdinal("IdTrip")),
+                Name        = reader.GetString(reader.GetOrdinal("Name")),
+                Description = reader.GetString(reader.GetOrdinal("Description")),
+                DateFrom    = reader.GetDateTime(reader.GetOrdinal("DateFrom")),
+                DateTo      = reader.GetDateTime(reader.GetOrdinal("DateTo")),
+                MaxPeople   = reader.GetInt32(reader.GetOrdinal("MaxPeople")),
+                CountryTrips = []
+            };
+        }
+
+        return null;
+    }
+
     public async Task<List<Trip>> GetByIdsAsync(IEnumerable<int> ids)
     {
         var idList = ids.Distinct().ToList();
@@ -110,17 +139,32 @@ public class TripsRepository : ITripsRepository
         return result;
     }
 
-    public async Task<bool> DoesTripExistAsync(int tripId)
+    public async Task<bool> DoesTripExistAsync(int id)
     {
         const string sql = "SELECT Count(*) From Trip WHERE IdTrip = @tripId";
 
         await using var conn = _connectionFactory.GetConnection();
         await using var cmd = conn.CreateCommand();
         cmd.CommandText = sql;
-        cmd.Parameters.AddWithValue("@tripId", tripId);
+        cmd.Parameters.AddWithValue("@tripId", id);
 
         await conn.OpenAsync();
         var result = (int)(await cmd.ExecuteScalarAsync() ?? 0);
         return result > 0;
+    }
+
+    public async Task<int> CountTripRegistrationsAsync(int id)
+    {
+        const string sql = "SELECT Count(*) From Trip WHERE IdTrip = @tripId";
+
+        await using var conn = _connectionFactory.GetConnection();
+        await using var cmd = conn.CreateCommand();
+        cmd.CommandText = sql;
+        cmd.Parameters.AddWithValue("@tripId", id);
+
+        await conn.OpenAsync();
+        
+        var result = (int)(await cmd.ExecuteScalarAsync() ?? 0);
+        return result;
     }
 }

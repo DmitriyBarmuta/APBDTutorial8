@@ -19,8 +19,7 @@ public class ClientsService : IClientsService
 
     public async Task<List<ClientTripDTO>> GetClientTripsAsync(int clientId)
     {
-        if (clientId <= 0)
-            throw new InvalidClientIdException("Client ID must be a positive integer.");
+        if (clientId <= 0) throw new InvalidClientIdException("Client ID must be a positive integer.");
 
         var exists = await _clientsRepository.DoesClientExistAsync(clientId);
         if (!exists)
@@ -51,13 +50,43 @@ public class ClientsService : IClientsService
         return await _clientsRepository.CreateClientAsync(createClientDto);
     }
 
-    public Task RegisterClientToTripAsync(int clientId, int tripId)
+    public async Task RegisterClientToTripAsync(int clientId, int tripId)
     {
+        if (clientId <= 0) throw new InvalidClientIdException("Client ID must be a positive integer.");
+        if (tripId <= 0) throw new InvalidTripIdException("Trip ID must be a positive integer.");
         
+        if (!await _clientsRepository.DoesClientExistAsync(clientId)) 
+            throw new NoSuchClientException($"Client with ID {clientId} not found.");
+
+        if (!await _tripsRepository.DoesTripExistAsync(tripId))
+            throw new NoSuchTripException($"Trip with ID {tripId} not found.");
+
+        if (await _clientsRepository.DoesClientExistAsync(clientId))
+            throw new AlreadyRegisteredException(
+                $"Client with ID {clientId} already registered for trip with ID {tripId}");
+
+        var trip = await _tripsRepository.GetByIdAsync(tripId);
+        var registrationsCount = await _tripsRepository.CountTripRegistrationsAsync(tripId);
+
+        if (registrationsCount >= trip!.MaxPeople)
+            throw new TripFullException($"Trip with ID {tripId} is full.");
+
+        await _clientsRepository.RegisterClientForTripAsync(clientId, tripId);
     }
 
-    public Task DeleteClientFromTripAsync(int clientId, int tripId)
+    public async Task RemoveClientFromTripAsync(int clientId, int tripId)
     {
+        if (clientId <= 0) throw new InvalidClientIdException("Client ID must be a positive integer.");
+        if (tripId <= 0) throw new InvalidTripIdException("Trip ID must be a positive integer.");
         
+        if (!await _clientsRepository.DoesClientExistAsync(clientId)) 
+            throw new NoSuchClientException($"Client with ID {clientId} not found.");
+
+        if (!await _tripsRepository.DoesTripExistAsync(tripId))
+            throw new NoSuchTripException($"Trip with ID {tripId} not found.");
+
+        var deleted = await _clientsRepository.DeleteClientTripAsync(clientId, tripId);
+        if (!deleted)
+            throw new RegistrationNotFoundException($"Registration of client {clientId} to trip {tripId} not found.");
     }
 }

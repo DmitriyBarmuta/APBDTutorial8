@@ -8,5 +8,5 @@ public interface IClientsService
     Task<List<ClientTripDTO>> GetClientTripsAsync(int clientId);
     Task<int> CreateClientAsync(CreateClientDTO createClientDto);
     Task RegisterClientToTripAsync(int clientId, int tripId);
-    Task DeleteClientFromTripAsync(int clientId, int tripId);
+    Task RemoveClientFromTripAsync(int clientId, int tripId);
 }
